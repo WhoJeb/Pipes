@@ -25,12 +25,12 @@ $ ./build.sh
 ### Other Unix
 #### Prerequisites
 1. Make sure you have the following installed: (You will likey have to check what they are called on your OS)
-  - cmake
-  - make
-  - clang
-  - clang++
-  - pkg-config
-  - raylib
+    - cmake
+    - make
+    - clang
+    - clang++
+    - pkg-config
+    - raylib
 
 
 #### 1. Make build.sh executable if need be
