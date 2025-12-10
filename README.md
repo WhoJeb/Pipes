@@ -1,7 +1,10 @@
 # Pipes
 My first foray into Raylib. It is a simple L-System adjacent stepping algorithm
 
-<video src="./Pipes.mp4" width="320" height="240" controls></video>
+<video width="320" height="240" controls>
+  <source src="Pipes.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## Compiling from source
 ### Nixos
