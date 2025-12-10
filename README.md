@@ -3,7 +3,6 @@ My first foray into Raylib. It is a simple L-System adjacent stepping algorithm
 
 ## Compiling from source
 ### Nixos
----
 #### Prerequisites
     1. Clone this git repo
     2. Enter the project root directory
@@ -23,8 +22,9 @@ $ chmod +x build.sh
 $ ./build.sh
 ```
 
-### Other Unix
 ---
+
+### Other Unix
 #### Prerequisites
 1. Make sure you have the following installed: (You will likey have to check what they are called on your OS)
     - cmake
