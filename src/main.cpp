@@ -9,6 +9,8 @@ const int WINDOW_HEIGHT = 800;
 const char WINDOW_NAME[] = "Pipes";
 
 const Color myBlue = { 144, 196, 224, 255 }; 
+const Color myPurple = { 176, 133, 203, 255 }; 
+const Color myPurple2 = { 209, 163, 239, 255 }; 
 const float SIZE = 2.0f;
 const float STEP = 50.0f;
 
@@ -22,7 +24,7 @@ int main(void) {
 
   srand(time(0));
 
-  Vector2 start = {WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f};
+  Vector2 start = {WINDOW_WIDTH / 2.0f - 200, WINDOW_HEIGHT / 2.0f - 200};
   Vector2 end = start;
   Vector2 lastDrawn = start;
   float t = 0.0f; // animation progress (0.0 to 1.0)
@@ -41,7 +43,7 @@ int main(void) {
     ClearBackground(BLACK);
   EndTextureMode();
 
-  SetTextureFilter(trail.texture, TEXTURE_FILTER_BILINEAR);
+  SetTextureFilter(trail.texture, TEXTURE_FILTER_POINT);
 
   while (!WindowShouldClose()) {
 
@@ -67,7 +69,7 @@ int main(void) {
       start = end;
 
       // Screen bounds checks 
-      if (end.y >= GetScreenHeight()) { // Check bottom
+      if (end.y + STEP >= GetScreenHeight()) { // Check bottom
         int dir = rand() % 3;
 
         switch (dir) {
@@ -75,7 +77,7 @@ int main(void) {
           case 1: end = { start.x - STEP, start.y }; break; // left
           case 2: end = { start.x, start.y - STEP }; break; // up
         } 
-      } else if (end.y) { // Check top
+      } else if (end.y - STEP <= 0) { // Check top
         int dir = rand() % 3;
 
         switch (dir) {
@@ -84,7 +86,7 @@ int main(void) {
           case 2: end = { start.x - STEP, start.y }; break; // left
         } 
 
-      } else if (end.x >= GetScreenWidth()) { // check right
+      } else if (end.x + STEP >= GetScreenWidth()) { // check right
         int dir = rand() % 3;
 
         switch (dir) {
@@ -93,7 +95,7 @@ int main(void) {
           case 2: end = { start.x, start.y - STEP }; break; // up
         } 
 
-      } else if (end.x <= 0) { // check left
+      } else if (end.x - STEP <= 0) { // check left
         int dir = rand() % 3;
 
         switch (dir) {
@@ -130,22 +132,31 @@ int main(void) {
       if (end.y > start.y) end.y = floorf(end.y);
       else end.y = ceilf(end.y);
 
+      // Snap start/end to integer pixels
+      start.x = roundf(start.x);
+      start.y = roundf(start.y);
+      end.x   = roundf(end.x);
+      end.y   = roundf(end.y);
+
       // Recalculate for new segment immediately
       delta = { end.x - start.x, end.y - start.y };
       length = sqrtf(delta.x * delta.x + delta.y * delta.y);
     }
+
     
     Vector2 current = {
       start.x + delta.x * t,
       start.y + delta.y * t
     };
+
+    Vector2 currentInt = { roundf(current.x), roundf(current.y) };
     
     // Draw line onto trail texture
     BeginTextureMode(trail);
-      DrawLineV(start, current, myBlue);
+      DrawLineEx(start, current, SIZE, myBlue);
     EndTextureMode();
 
-    lastDrawn = current;
+    lastDrawn = currentInt;
    
     BeginDrawing();
       ClearBackground(BLACK);
@@ -154,6 +165,7 @@ int main(void) {
                      (Vector2){ 0, 0 },
                      WHITE
                     );
+      DrawLineEx(start, current, SIZE, myPurple2);
     EndDrawing();
   }
 
