@@ -1,7 +1,7 @@
 # Pipes
 My first foray into Raylib. It is a simple L-System adjacent stepping algorithm
 
-![Pipes.mp4]
+<video src="Pipes.mp4" width="320" height="240" controls></video>
 
 ## Compiling from source
 ### Nixos
