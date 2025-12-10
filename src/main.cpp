@@ -7,6 +7,7 @@
 const int WINDOW_WIDTH = 1590;
 const int WINDOW_HEIGHT = 800;
 const char WINDOW_NAME[] = "Pipes";
+
 const Color myBlue = { 144, 196, 224, 255 }; 
 const float SIZE = 2.0f;
 const float STEP = 50.0f;
@@ -23,6 +24,7 @@ int main(void) {
 
   Vector2 start = {WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f};
   Vector2 end = start;
+  Vector2 lastDrawn = start;
   float t = 0.0f; // animation progress (0.0 to 1.0)
   float speed = 5.0f; // anim speed
   Vector2 delta = {0, 0};
@@ -50,7 +52,7 @@ int main(void) {
       BeginTextureMode(trail);
         ClearBackground(BLACK);
         EndTextureMode();
-      SetTextureFilter(trail.texture, TEXTURE_FILTER_BILINEAR);
+      SetTextureFilter(trail.texture, TEXTURE_FILTER_POINT);
     }
 
     // Pick a new target if we reached the previous one
@@ -58,38 +60,92 @@ int main(void) {
     float length = sqrtf(delta.x * delta.x + delta.y * delta.y);
 
     // Update animation
-    t += (speed / length);  // speed of animation
+    t += speed / length;  // speed of animation
 
     if (t >= 1.0f) {
       t = 0.0f;
       start = end;
 
-      int dir = rand() % 4;
+      // Screen bounds checks 
+      if (end.y >= GetScreenHeight()) { // Check bottom
+        int dir = rand() % 3;
 
-      switch (dir) {
-        case 0: end = { start.x + STEP - 1, start.y }; break; // right
-        case 1: end = { start.x, start.y + STEP }; break; // down
-        case 2: end = { start.x - STEP, start.y }; break; // left
-        case 3: end = { start.x, start.y - STEP }; break; // up
-      } 
+        switch (dir) {
+          case 0: end = { start.x + STEP, start.y }; break; // right
+          case 1: end = { start.x - STEP, start.y }; break; // left
+          case 2: end = { start.x, start.y - STEP }; break; // up
+        } 
+      } else if (end.y) { // Check top
+        int dir = rand() % 3;
 
-      start.x = floorf(start.x);
-      start.y = floorf(start.y);
-      end.x   = floorf(end.x);
-      end.y   = floorf(end.y);
+        switch (dir) {
+          case 0: end = { start.x + STEP, start.y }; break; // right
+          case 1: end = { start.x, start.y + STEP }; break; // down
+          case 2: end = { start.x - STEP, start.y }; break; // left
+        } 
+
+      } else if (end.x >= GetScreenWidth()) { // check right
+        int dir = rand() % 3;
+
+        switch (dir) {
+          case 0: end = { start.x, start.y + STEP }; break; // down
+          case 1: end = { start.x - STEP, start.y }; break; // left
+          case 2: end = { start.x, start.y - STEP }; break; // up
+        } 
+
+      } else if (end.x <= 0) { // check left
+        int dir = rand() % 3;
+
+        switch (dir) {
+          case 0: end = { start.x + STEP, start.y }; break; // right
+          case 1: end = { start.x, start.y + STEP }; break; // down
+          case 2: end = { start.x, start.y - STEP }; break; // up
+        } 
+
+      } else {
+        int dir = rand() % 4;
+
+        switch (dir) {
+          case 0: end = { start.x + STEP, start.y }; break; // right
+          case 1: end = { start.x, start.y + STEP }; break; // down
+          case 2: end = { start.x - STEP, start.y }; break; // left
+          case 3: end = { start.x, start.y - STEP }; break; // up
+        } 
+      }
+
+      // start.x = floorf(start.x);
+      // start.y = floorf(start.y);
+      // end.x   = floorf(end.x);
+      // end.y   = floorf(end.y);
+      
+      if (end.x > start.x) start.x = floorf(start.x);
+      else start.x = ceilf(start.x);
+
+      if (end.y > start.y) start.y = floorf(start.y);
+      else start.y = ceilf(start.y);
+
+      if (end.x > start.x) end.x = floorf(end.x);
+      else end.x = ceilf(end.x);
+
+      if (end.y > start.y) end.y = floorf(end.y);
+      else end.y = ceilf(end.y);
 
       // Recalculate for new segment immediately
       delta = { end.x - start.x, end.y - start.y };
       length = sqrtf(delta.x * delta.x + delta.y * delta.y);
     }
     
-    Vector2 current = { start.x + delta.x * t, start.y + delta.y * t };
-
+    Vector2 current = {
+      start.x + delta.x * t,
+      start.y + delta.y * t
+    };
     
     // Draw line onto trail texture
     BeginTextureMode(trail);
-      DrawLineEx(start, current, SIZE, myBlue);
+      DrawLineV(start, current, myBlue);
     EndTextureMode();
+
+    lastDrawn = current;
    
     BeginDrawing();
       ClearBackground(BLACK);
