@@ -7,6 +7,8 @@ My first foray into Raylib. It is a simple L-System adjacent stepping algorithm
     1. Clone this git repo
     2. Enter the project root directory
 
+---
+
 #### 1. Enter the nix-shell
 ```sh
 $ nix-shell
